@@ -1,5 +1,5 @@
 # Stage 1: Prebuilt base with model + deps
-FROM vinaygolkonda99/llm_deps:v1 AS base_deps
+FROM vinaygolkonda99/llm_deps:otel AS base_deps
 
 # Stage 2: Final container
 FROM python:3.10.11-slim-buster AS final
