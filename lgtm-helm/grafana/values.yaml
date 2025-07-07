@@ -1,35 +1,16 @@
-ingress:
-  enabled: false
-adminPassword: admin
-service:
-  type: NodePort
-datasources:
-  datasources.yaml:
-    apiVersion: 1
-    datasources:
-      - name: Loki
-        type: loki
-        url: http://loki:3100
-        access: proxy
-        isDefault: true
-      - name: Tempo
-        type: tempo
-        url: http://tempo:3200
-        access: proxy
-      - name: Mimir
-        type: prometheus
-        url: http://mimir-distributed-nginx:80/prometheus
-        access: proxy
+resources:
+  requests:
+    cpu: 50m
+    memory: 128Mi
+  limits:
+    cpu: 100m
+    memory: 256Mi
 
-dashboardProviders:
-  dashboardproviders.yaml:
-    apiVersion: 1
-    providers:
-      - name: default
-        orgId: 1
-        folder: ''
-        type: file
-        disableDeletion: false
-        editable: true
-        options:
-          path: /var/lib/grafana/dashboards/default
+adminUser: admin
+adminPassword: admin
+
+persistence:
+  enabled: false
+
+service:
+  type: ClusterIP
