@@ -33,46 +33,62 @@ tempo:
     enabled: false
 
 mimir:
-  ingester:
-    replicas: 1
-    resources:
-      requests:
-        cpu: 100m
-        memory: 256Mi
-      limits:
-        cpu: 200m
-        memory: 512Mi
-  distributor:
-    replicas: 1
-    resources:
-      requests:
-        cpu: 100m
-        memory: 128Mi
-  querier:
-    replicas: 1
-    resources:
-      requests:
-        cpu: 100m
-        memory: 128Mi
-  queryFrontend:
-    replicas: 1
-    resources:
-      requests:
-        cpu: 100m
-        memory: 128Mi
-  storeGateway:
-    replicas: 1
-    resources:
-      requests:
-        cpu: 100m
-        memory: 128Mi
-  ruler:
-    replicas: 1
-    resources:
-      requests:
-        cpu: 100m
-        memory: 128Mi
+distributor:
+  replicas: 1
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
 
+ingester:
+  replicas: 1
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+
+querier:
+  replicas: 1
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+
+queryFrontend:
+  replicas: 1
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+
+storeGateway:
+  replicas: 1
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+
+queryScheduler:
+  replicas: 1
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+
+ruler:
+  replicas: 1
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+
+minio:
+  replicas: 1
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+  
 promtail:
   resources:
     requests:
