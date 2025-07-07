@@ -1,15 +1,67 @@
-mimir:
-  structuredConfig:
-    server:
-      http_listen_port: 9009
-    memberlist:
-      join_members: []
-    ingester:
-      lifecycler:
-        ring:
-          kvstore:
-            store: inmemory
-    blocks_storage:
-      backend: filesystem
-      filesystem:
-        dir: /tmp/mimir/data
+global:
+  replicas: 1
+
+ingester:
+  replicas: 1
+  resources:
+    requests:
+      cpu: 50m
+      memory: 128Mi
+    limits:
+      cpu: 100m
+      memory: 256Mi
+
+distributor:
+  replicas: 1
+  resources:
+    requests:
+      cpu: 50m
+      memory: 128Mi
+    limits:
+      cpu: 100m
+      memory: 256Mi
+
+querier:
+  replicas: 1
+  resources:
+    requests:
+      cpu: 50m
+      memory: 128Mi
+    limits:
+      cpu: 100m
+      memory: 256Mi
+
+queryFrontend:
+  replicas: 1
+  resources:
+    requests:
+      cpu: 50m
+      memory: 128Mi
+    limits:
+      cpu: 100m
+      memory: 256Mi
+
+storeGateway:
+  replicas: 1
+  resources:
+    requests:
+      cpu: 50m
+      memory: 128Mi
+    limits:
+      cpu: 100m
+      memory: 256Mi
+
+ruler:
+  replicas: 1
+  resources:
+    requests:
+      cpu: 50m
+      memory: 128Mi
+    limits:
+      cpu: 100m
+      memory: 256Mi
+
+minio:
+  enabled: true
+  persistence:
+    enabled: false
