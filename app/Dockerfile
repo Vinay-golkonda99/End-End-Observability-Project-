@@ -27,7 +27,9 @@ RUN pip install --upgrade pip && \
         opentelemetry-instrumentation \
         opentelemetry-exporter-otlp \
         opentelemetry-instrumentation-flask \
-        opentelemetry-instrumentation-logging
+        opentelemetry-instrumentation-logging \
+        prometheus_flask_exporter
+
 
 # Required for Promtail/Loki logging
 RUN mkdir -p /var/log/containers
