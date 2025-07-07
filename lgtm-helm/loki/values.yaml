@@ -14,6 +14,7 @@ grafana:
   enabled: false
 
 promtail:
+  enabled: true
   resources:
     requests:
       cpu: 50m
@@ -21,3 +22,22 @@ promtail:
     limits:
       cpu: 100m
       memory: 128Mi
+  config:
+    clients:
+      - url: http://loki:3100/loki/api/v1/push
+
+    positions:
+      filename: /tmp/positions.yaml
+
+    server:
+      http_listen_port: 3101
+      grpc_listen_port: 0
+
+    scrape_configs:
+      - job_name: system
+        static_configs:
+          - targets:
+              - localhost
+            labels:
+              job: varlogs
+              __path__: /var/log/*.log
