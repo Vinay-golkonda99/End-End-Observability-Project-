@@ -11,8 +11,8 @@ export OTEL_RESOURCE_ATTRIBUTES="service.namespace=gke,deployment.environment=pr
 # Optional: if you want to preload app into Gunicorn workers
 export PYTHONUNBUFFERED=1
 
-# 🔥 Start Gunicorn using Unix socket for Nginx reverse proxy
-gunicorn -w 2 --threads 4 -b 0.0.0.0:1999 main:app
+# 🔥 Start Gunicorn in background using Unix socket (used in Nginx config)
+gunicorn -w 2 --threads 4 -b unix:/tmp/gunicorn.sock main:app &
 
-# 🔥 Run Nginx in foreground
+# 🔥 Start Nginx in foreground
 nginx -g 'daemon off;'
