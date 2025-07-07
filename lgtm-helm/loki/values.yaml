@@ -1,0 +1,15 @@
+loki:
+  enabled: true
+  config:
+    table_manager:
+      retention_deletes_enabled: true
+      retention_period: 168h
+  persistence:
+    enabled: false
+  isDefault: false
+promtail:
+  enabled: false
+prometheus:
+  enabled: false
+grafana:
+  enabled: false
