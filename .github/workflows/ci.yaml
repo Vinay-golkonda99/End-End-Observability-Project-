@@ -61,3 +61,29 @@ jobs:
       - name: 📦 Apply K8s manifests from /k8s
         run: |
           kubectl apply -f k8s/
+
+      - name: 📦 Install Helm
+        uses: azure/setup-helm@v3
+
+      - name: 🧰 Add Helm repos and update
+        run: |
+          helm repo add grafana https://grafana.github.io/helm-charts
+          helm repo update
+
+      - name: 🚀 Deploy Loki, Grafana, Tempo, Mimir
+        run: |
+          helm upgrade --install loki grafana/loki-stack \
+            --namespace observability --create-namespace \
+            -f lgtm-helm/loki/values.yaml
+
+          helm upgrade --install mimir grafana/mimir-distributed \
+            --namespace observability \
+            -f lgtm-helm/mimir/values.yaml
+
+          helm upgrade --install tempo grafana/tempo \
+            --namespace observability \
+            -f lgtm-helm/tempo/values.yaml
+
+          helm upgrade --install grafana grafana/grafana \
+            --namespace observability \
+            -f lgtm-helm/grafana/values.yaml
