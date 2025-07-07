@@ -1,4 +1,4 @@
-FROM llm_small_deps:v1 as base_deps
+FROM vinaygolkonda99/llm_deps:v1 as base_deps
 
 # Final Stage:
 FROM python:3.10.11-slim-buster as final
