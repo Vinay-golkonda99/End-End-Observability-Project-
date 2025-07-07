@@ -56,7 +56,7 @@ COPY . .
 COPY flask.conf /etc/nginx/nginx.conf
 
 # Expose Nginx port (used in flask.conf)
-EXPOSE 1999
+EXPOSE 80
 
 # Entrypoint to run Gunicorn + Nginx
 ENTRYPOINT ["sh", "/app/run.sh"]
