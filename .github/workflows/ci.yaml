@@ -70,20 +70,26 @@ jobs:
           helm repo add grafana https://grafana.github.io/helm-charts
           helm repo update
 
-      - name: 🚀 Deploy Loki, Grafana, Tempo, Mimir
+      - name: 🚀 Deploy Loki
         run: |
           helm upgrade --install loki grafana/loki-stack \
             --namespace observability --create-namespace \
-            -f lgtm-helm/loki/values.yaml
+            -f lgtm-helm/values.yaml
 
-          helm upgrade --install mimir grafana/mimir-distributed \
-            --namespace observability \
-            -f lgtm-helm/mimir/values.yaml
-
+      - name: 🚀 Deploy Tempo
+        run: |
           helm upgrade --install tempo grafana/tempo \
             --namespace observability \
-            -f lgtm-helm/tempo/values.yaml
+            -f lgtm-helm/values.yaml
 
+      - name: 🚀 Deploy Mimir
+        run: |
+          helm upgrade --install mimir grafana/mimir-distributed \
+            --namespace observability \
+            -f lgtm-helm/values.yaml
+
+      - name: 🚀 Deploy Grafana
+        run: |
           helm upgrade --install grafana grafana/grafana \
             --namespace observability \
-            -f lgtm-helm/grafana/values.yaml
+            -f lgtm-helm/values.yaml
