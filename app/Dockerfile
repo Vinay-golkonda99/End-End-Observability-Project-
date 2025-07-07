@@ -28,18 +28,7 @@ COPY --from=base_deps /usr/lib/jvm/java-17-openjdk-amd64 /usr/lib/jvm/java-17-op
 
 # 🔥 NOW install Python deps AFTER base COPY (important!)
 RUN pip install --upgrade pip && \
-    pip install gunicorn && \
-    pip install \
-        protobuf \
-        sentencepiece \
-        flask \
-        opentelemetry-api \
-        opentelemetry-sdk \
-        opentelemetry-instrumentation \
-        opentelemetry-exporter-otlp \
-        opentelemetry-instrumentation-flask \
-        opentelemetry-instrumentation-logging \
-        prometheus_flask_exporter
+    pip install gunicorn 
 
 # Environment variables
 ENV LD_LIBRARY_PATH=/opt/oracle/instantclient_19_18:$LD_LIBRARY_PATH
