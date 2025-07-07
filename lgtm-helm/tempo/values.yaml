@@ -1,15 +1,14 @@
-server:
-  http_listen_port: 3200
-ingester:
-  trace_idle_period: 10s
-  max_block_duration: 5m
-storage:
-  trace:
-    backend: local
-    local:
-      path: /tmp/tempo/traces
-receivers:
-  otlp:
-    protocols:
-      grpc:
-      http:
+tempo:
+  resources:
+    requests:
+      cpu: 50m
+      memory: 128Mi
+    limits:
+      cpu: 100m
+      memory: 256Mi
+
+  retention:
+    time: 12h
+
+  persistence:
+    enabled: false
