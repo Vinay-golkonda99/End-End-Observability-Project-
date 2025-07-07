@@ -1,0 +1,15 @@
+mimir:
+  structuredConfig:
+    server:
+      http_listen_port: 9009
+    memberlist:
+      join_members: []
+    ingester:
+      lifecycler:
+        ring:
+          kvstore:
+            store: inmemory
+    blocks_storage:
+      backend: filesystem
+      filesystem:
+        dir: /tmp/mimir/data
