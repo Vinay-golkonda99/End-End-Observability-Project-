@@ -1,15 +1,23 @@
 loki:
-  enabled: true
-  config:
-    table_manager:
-      retention_deletes_enabled: true
-      retention_period: 168h
+  resources:
+    requests:
+      cpu: 50m
+      memory: 128Mi
+    limits:
+      cpu: 100m
+      memory: 256Mi
+
   persistence:
     enabled: false
-  isDefault: false
-promtail:
-  enabled: false
-prometheus:
-  enabled: false
+
 grafana:
   enabled: false
+
+promtail:
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      cpu: 100m
+      memory: 128Mi
