@@ -56,8 +56,7 @@ jobs:
 
       - name: 🧭 Get GKE Credentials
         run: |
-          gcloud container clusters get-credentials ${{ secrets.GKE_CLUSTER_NAME }} \
-            --region ${{ secrets.GKE_REGION }}
+          gcloud container clusters get-credentials "${{ secrets.GKE_CLUSTER_NAME }}" --region "${{ secrets.GKE_REGION }}"
 
       - name: 📦 Apply K8s manifests from /k8s
         run: |
