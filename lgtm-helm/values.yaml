@@ -44,9 +44,9 @@ mimir:
     enabled: true
 
   ingester:
+    replicas: 1
     zoneAwareReplication:
       enabled: false
-    replicas: 1
     resources:
       requests:
         cpu: 100m
@@ -99,6 +99,4 @@ promtail:
     requests:
       cpu: 50m
       memory: 64Mi
-    limits:
-      cpu: 100m
-      memory: 128Mi
+    l
