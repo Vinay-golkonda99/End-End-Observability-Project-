@@ -1,104 +1,85 @@
-grafana:
-  replicas: 1
-  resources:
-    requests:
-      cpu: 100m
-      memory: 128Mi
-    limits:
-      cpu: 200m
-      memory: 256Mi
+serviceAccount:
+  create: true
+  annotations:
+    iam.gke.io/gcp-service-account: observability-sa@vast-pad-464511-i5.iam.gserviceaccount.com
 
 loki:
-  replicas: 1
-  resources:
-    requests:
-      cpu: 50m
-      memory: 128Mi
-    limits:
-      cpu: 100m
-      memory: 256Mi
-  persistence:
-    enabled: false
-
-tempo:
-  replicas: 1
-  resources:
-    requests:
-      cpu: 50m
-      memory: 128Mi
-    limits:
-      cpu: 100m
-      memory: 256Mi
-  persistence:
-    enabled: false
+  storage:
+    type: gcs
+    bucketNames:
+      chunks: loki-chunks-1
+      ruler: loki-ruler-1
+  schemaConfig:
+    configs:
+      - from: 2024-04-01
+        store: tsdb
+        object_store: gcs
+        schema: v13
+        index:
+          prefix: index_
+          period: 24h
+  memcached:
+    chunk_cache:
+      enabled: true
+    results_cache:
+      enabled: true
+  serviceAccount:
+    annotations:
+      iam.gke.io/gcp-service-account: observability-sa@vast-pad-464511-i5.iam.gserviceaccount.com
 
 mimir:
-  config: |
-    ingester:
-      ring:
-        zone_awareness_enabled: true
-    activity_tracker:
-      filepath: /active-query-tracker/activity.log
-
-  activityTracker:
-    enabled: true
-
-  ingester:
-    replicas: 1
-    zoneAwareReplication:
+  structuredConfig:
+    usage_stats:
       enabled: false
-    resources:
-      requests:
-        cpu: 100m
-        memory: 128Mi
-
-  querier:
-    replicas: 1
-    resources:
-      requests:
-        cpu: 50m
-        memory: 64Mi
-
-  queryFrontend:
-    replicas: 1
-    resources:
-      requests:
-        cpu: 50m
-        memory: 64Mi
-
-  storeGateway:
-    replicas: 1
-    resources:
-      requests:
-        cpu: 50m
-        memory: 64Mi
-
-  queryScheduler:
-    replicas: 1
-    resources:
-      requests:
-        cpu: 50m
-        memory: 64Mi
-
-  ruler:
-    replicas: 1
-    resources:
-      requests:
-        cpu: 50m
-        memory: 64Mi
-
-  minio:
-    replicas: 1
-    resources:
-      requests:
-        cpu: 100m
-        memory: 128Mi
-
-promtail:
-  resources:
-    requests:
-      cpu: 50m
-      memory: 64Mi
     limits:
-      cpu: 100m
-      memory: 128Mi
+      max_global_series_per_user: 10000000
+      max_global_exemplars_per_user: 10000000
+    common:
+      storage:
+        backend: gcs
+    alertmanager_storage:
+      gcs:
+        bucket_name: mimir-alertmanager-1
+    ruler_storage:
+      gcs:
+        bucket_name: mimir-ruler-1
+    blocks_storage:
+      backend: gcs
+      gcs:
+        bucket_name: mimir-blocks-1
+  serviceAccount:
+    annotations:
+      iam.gke.io/gcp-service-account: observability-sa@vast-pad-464511-i5.iam.gserviceaccount.com
+
+tempo:
+  reportingEnabled: false
+  storage:
+    trace:
+      backend: gcs
+      gcs:
+        bucket_name: tempo-13
+  serviceAccount:
+    annotations:
+      iam.gke.io/gcp-service-account: observability-sa@vast-pad-464511-i5.iam.gserviceaccount.com
+  ingester:
+    persistence:
+      enabled: true
+  structuredConfig:
+    compactor:
+      retention:
+        traces: 336h
+    query_frontend:
+      search:
+        max_duration: 336h0m0s
+  traces:
+    otlp:
+      grpc:
+        enabled: true
+      http:
+        enabled: true
+
+grafana:
+  adminUser: admin
+  adminPassword: yourpassword
+  service:
+    type: LoadBalancer
