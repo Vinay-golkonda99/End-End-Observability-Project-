@@ -36,6 +36,9 @@ mimir:
   config: |
     activity_tracker:
       filepath: /active-query-tracker/activity.log
+    ingester:
+      ring:
+        zone_awareness_enabled: true
 
   activityTracker:
     enabled: true
