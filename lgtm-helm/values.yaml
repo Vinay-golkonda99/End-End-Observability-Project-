@@ -36,6 +36,9 @@ mimir:
   config: |
     activity_tracker:
       filepath: /active-query-tracker/activity.log
+
+  activityTracker:
+    enabled: true
       
   distributor:
     replicas: 1
