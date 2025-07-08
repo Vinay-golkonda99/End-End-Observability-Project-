@@ -28,7 +28,7 @@ COPY --from=base_deps /usr/lib/jvm/java-17-openjdk-amd64 /usr/lib/jvm/java-17-op
 
 # 🔥 NOW install Python deps AFTER base COPY (important!)
 RUN pip install --upgrade pip && \
-    pip install gunicorn 
+    pip install --no-cache-dir --user gunicorn
     
 
 # Environment variables
