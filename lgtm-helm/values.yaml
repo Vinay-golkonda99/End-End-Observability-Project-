@@ -38,19 +38,14 @@ mimir:
       filepath: /active-query-tracker/activity.log
     ingester:
       ring:
-        zone_awareness_enabled: true
+        zone_awareness_enabled: false
 
   activityTracker:
     enabled: true
-      
-  distributor:
-    replicas: 1
-    resources:
-      requests:
-        cpu: 50m
-        memory: 64Mi
 
   ingester:
+    zoneAwareReplication:
+      enabled: false
     replicas: 1
     resources:
       requests:
