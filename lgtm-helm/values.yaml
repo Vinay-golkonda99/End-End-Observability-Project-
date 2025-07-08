@@ -33,7 +33,7 @@ tempo:
     enabled: false
 
 mimir:
-  config: {}
+  config: ""
   distributor:
     replicas: 1
     resources:
