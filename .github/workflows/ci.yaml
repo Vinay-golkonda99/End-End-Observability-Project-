@@ -86,7 +86,8 @@ jobs:
         run: |
           helm upgrade --install mimir grafana/mimir-distributed \
             --namespace observability \
-            -f lgtm-helm/values.yaml
+            -f lgtm-helm/values.yaml \
+            --set mimir.ingester.zoneAwareReplication.enabled=false
 
       - name: 🚀 Deploy Grafana
         run: |
