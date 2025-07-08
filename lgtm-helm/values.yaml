@@ -33,7 +33,10 @@ tempo:
     enabled: false
 
 mimir:
-  config: ""
+  config: |
+    activity_tracker:
+      filepath: /active-query-tracker/activity.log
+      
   distributor:
     replicas: 1
     resources:
