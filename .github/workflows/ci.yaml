@@ -67,6 +67,7 @@ jobs:
           helm repo add open-telemetry https://open-telemetry.github.io/opentelemetry-helm-charts
           helm repo update
 
+      # Deploy Mimir (Metrics)
       - name: Deploy Mimir (Metrics)
         run: |
           helm upgrade --install mimir grafana/mimir-distributed \
@@ -77,18 +78,21 @@ jobs:
             --set mimir.minio.enabled=true \
             --set mimir.store_gateway.enabled=true
 
+      # Deploy Tempo (Traces)
       - name: Deploy Tempo (Traces)
         run: |
           helm upgrade --install tempo grafana/tempo-distributed \
             --namespace observability \
             --set tempo.metricsGenerator.enabled=true
 
+      # Deploy Loki (Logs)
       - name: Deploy Loki (Logs)
         run: |
           helm upgrade --install loki grafana/loki-distributed \
             --namespace observability \
             --set loki.gateway.enabled=true
 
+      # Deploy Grafana UI
       - name: Deploy Grafana UI
         run: |
           helm upgrade --install grafana grafana/grafana \
@@ -99,36 +103,36 @@ jobs:
             --set datasources."datasources\.yaml".apiVersion=1 \
             --set datasources."datasources\.yaml".datasources[0].name=Prometheus \
             --set datasources."datasources\.yaml".datasources[0].type=prometheus \
-            --set datasources."datasources\.yaml".datasources[0].url=http://mimir-distributor.observability:8080 \
+            --set datasources."datasources\.yaml".datasources[0].url=http://mimir-query-frontend.observability:8080 \
             --set datasources."datasources\.yaml".datasources[1].name=Tempo \
             --set datasources."datasources\.yaml".datasources[1].type=tempo \
             --set datasources."datasources\.yaml".datasources[1].url=http://tempo-query-frontend.observability:3200 \
             --set datasources."datasources\.yaml".datasources[2].name=Loki \
             --set datasources."datasources\.yaml".datasources[2].type=loki \
-            --set datasources."datasources\.yaml".datasources[2].url=http://loki-loki-distributed-gateway.observability:3100
+            --set datasources."datasources\.yaml".datasources[2].url=http://loki-loki-distributed-query-frontend.observability:3100
 
+      # Deploy OpenTelemetry Collector (uncomment if needed)
+      # - name: Deploy OpenTelemetry Collector
+      #   run: |
+      #     helm upgrade --install otel-collector open-telemetry/opentelemetry-collector \
+      #       --namespace observability \
+      #       --create-namespace \
+      #       -f lgtm-helm/otel-values.yaml
 
-      #- name: Deploy OpenTelemetry Collector   # UNCOMMENT THIS IF WE WANT TO DEPLOY OTEL COLLECTOR USING HELM
-        #run: |
-          #helm upgrade --install otel-collector open-telemetry/opentelemetry-collector \
-            #--namespace observability \
-            #--create-namespace \
-            #-f lgtm-helm/otel-values.yaml
-
-      
+      # Apply K8s manifests from /k8s
       - name: 📦 Apply K8s manifests from /k8s
         run: |
           kubectl apply -R -f k8s/
-          
 
-      - name: Deploy OpenTelemetry Demo App
-        run: |
-          helm install otel-demo open-telemetry/opentelemetry-demo \
-            --namespace demo \
-            --create-namespace \
-            --set opentelemetry-collector.enabled=false \
-            --set global.telemetry.enabled=true \
-            --set global.telemetry.metrics.exporter.otlp.endpoint=http://otel-collector.observability:4317 \
-            --set global.telemetry.traces.exporter.otlp.endpoint=http://otel-collector.observability:4317 \
-            --set global.telemetry.logs.enabled=true \
-            --set global.telemetry.logs.exporter.otlp.endpoint=http://otel-collector.observability:4317
+      # Deploy OpenTelemetry Demo App  #UNCOMMENT IF WE WANT TO USE OTEL-DEMO OFFICIAL APP TO TEST!
+      #- name: Deploy OpenTelemetry Demo App
+        #run: |
+          #helm install otel-demo open-telemetry/opentelemetry-demo \
+            #--namespace demo \
+            #--create-namespace \
+            #--set opentelemetry-collector.enabled=false \
+            #--set global.telemetry.enabled=true \
+            #--set global.telemetry.metrics.exporter.otlp.endpoint=http://otel-collector.observability:4317 \
+            #--set global.telemetry.traces.exporter.otlp.endpoint=http://otel-collector.observability:4317 \
+            #--set global.telemetry.logs.enabled=true \
+            #--set global.telemetry.logs.exporter.otlp.endpoint=http://otel-collector.observability:4317
