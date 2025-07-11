@@ -103,7 +103,7 @@ jobs:
             --set datasources."datasources\.yaml".apiVersion=1 \
             --set datasources."datasources\.yaml".datasources[0].name=Prometheus \
             --set datasources."datasources\.yaml".datasources[0].type=prometheus \
-            --set datasources."datasources\.yaml".datasources[0].url=http://mimir-query-frontend.observability:8080 \
+            --set datasources."datasources\.yaml".datasources[0].url=http://mimir-query-frontend.observability.svc.cluster.local:8080 \
             --set datasources."datasources\.yaml".datasources[1].name=Tempo \
             --set datasources."datasources\.yaml".datasources[1].type=tempo \
             --set datasources."datasources\.yaml".datasources[1].url=http://tempo-query-frontend.observability:3200 \
