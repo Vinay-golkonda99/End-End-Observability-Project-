@@ -65,32 +65,47 @@ jobs:
       - name: 📦 Install Helm
         uses: azure/setup-helm@v3
 
-      - name: 🧰 Add Helm repos and update
+      - name: Add Grafana Helm repo
         run: |
           helm repo add grafana https://grafana.github.io/helm-charts
           helm repo update
 
-      - name: 🚀 Deploy Loki
-        run: |
-          helm upgrade --install loki grafana/loki-stack \
-            --namespace observability --create-namespace \
-            -f lgtm-helm/values.yaml
-
-      - name: 🚀 Deploy Tempo
-        run: |
-          helm upgrade --install tempo grafana/tempo \
-            --namespace observability \
-            -f lgtm-helm/values.yaml
-
-      - name: 🚀 Deploy Mimir
+      - name: Deploy Mimir (Metrics)
         run: |
           helm upgrade --install mimir grafana/mimir-distributed \
             --namespace observability \
-            -f lgtm-helm/values.yaml \
-            
+            --create-namespace \
+            --set mimir.alertmanager.enabled=false \
+            --set mimir.compactor.enabled=true \
+            --set mimir.minio.enabled=true \
+            --set mimir.store_gateway.enabled=true
 
-      - name: 🚀 Deploy Grafana
+      - name: Deploy Tempo (Traces)
+        run: |
+          helm upgrade --install tempo grafana/tempo-distributed \
+            --namespace observability \
+            --set tempo.metricsGenerator.enabled=true
+
+      - name: Deploy Loki (Logs)
+        run: |
+          helm upgrade --install loki grafana/loki-distributed \
+            --namespace observability \
+            --set loki.gateway.enabled=true
+
+      - name: Deploy Grafana UI
         run: |
           helm upgrade --install grafana grafana/grafana \
             --namespace observability \
-            -f lgtm-helm/values.yaml
+            --set service.type=LoadBalancer \
+            --set adminUser=admin \
+            --set adminPassword=admin \
+            --set datasources."datasources\.yaml".apiVersion=1 \
+            --set datasources."datasources\.yaml".datasources[0].name=Prometheus \
+            --set datasources."datasources\.yaml".datasources[0].type=prometheus \
+            --set datasources."datasources\.yaml".datasources[0].url=http://mimir-distributor.observability:8080 \
+            --set datasources."datasources\.yaml".datasources[1].name=Tempo \
+            --set datasources."datasources\.yaml".datasources[1].type=tempo \
+            --set datasources."datasources\.yaml".datasources[1].url=http://tempo-query.observability:16686 \
+            --set datasources."datasources\.yaml".datasources[2].name=Loki \
+            --set datasources."datasources\.yaml".datasources[2].type=loki \
+            --set datasources."datasources\.yaml".datasources[2].url=http://loki-gateway.observability:3100
