@@ -65,9 +65,10 @@ jobs:
       - name: 📦 Install Helm
         uses: azure/setup-helm@v3
 
-      - name: Add Grafana Helm repo
+      - name: Add Helm Repos
         run: |
           helm repo add grafana https://grafana.github.io/helm-charts
+          helm repo add open-telemetry https://open-telemetry.github.io/opentelemetry-helm-charts
           helm repo update
 
       - name: Deploy Mimir (Metrics)
@@ -109,3 +110,10 @@ jobs:
             --set datasources."datasources\.yaml".datasources[2].name=Loki \
             --set datasources."datasources\.yaml".datasources[2].type=loki \
             --set datasources."datasources\.yaml".datasources[2].url=http://loki-gateway.observability:3100
+
+      - name: Deploy OpenTelemetry Collector
+        run: |
+          helm upgrade --install otel-collector open-telemetry/opentelemetry-collector \
+            --namespace observability \
+            --create-namespace \
+            -f lgtm-helm/otel-values.yaml
