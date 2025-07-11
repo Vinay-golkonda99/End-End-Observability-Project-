@@ -107,12 +107,12 @@ jobs:
             --set datasources."datasources\.yaml".datasources[2].type=loki \
             --set datasources."datasources\.yaml".datasources[2].url=http://loki-gateway.observability:3100
 
-      - name: Deploy OpenTelemetry Collector
-        run: |
-          helm upgrade --install otel-collector open-telemetry/opentelemetry-collector \
-            --namespace observability \
-            --create-namespace \
-            -f lgtm-helm/otel-values.yaml
+      #- name: Deploy OpenTelemetry Collector   # UNCOMMENT THIS IF WE WANT TO DEPLOY OTEL COLLECTOR USING HELM
+        #run: |
+          #helm upgrade --install otel-collector open-telemetry/opentelemetry-collector \
+            #--namespace observability \
+            #--create-namespace \
+            #-f lgtm-helm/otel-values.yaml
 
       - name: 📦 Apply K8s manifests from /k8s
         run: |
