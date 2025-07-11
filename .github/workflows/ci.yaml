@@ -117,3 +117,15 @@ jobs:
       - name: 📦 Apply K8s manifests from /k8s
         run: |
           kubectl apply -f k8s/
+
+      - name: Deploy OpenTelemetry Demo App
+        run: |
+          helm install otel-demo open-telemetry/opentelemetry-demo \
+            --namespace demo \
+            --create-namespace \
+            --set opentelemetry-collector.enabled=false \
+            --set global.telemetry.enabled=true \
+            --set global.telemetry.metrics.exporter.otlp.endpoint=http://otel-collector.observability:4317 \
+            --set global.telemetry.traces.exporter.otlp.endpoint=http://otel-collector.observability:4317 \
+            --set global.telemetry.logs.enabled=true \
+            --set global.telemetry.logs.exporter.otlp.endpoint=http://otel-collector.observability:4317
