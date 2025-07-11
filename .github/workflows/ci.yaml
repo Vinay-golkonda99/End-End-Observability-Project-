@@ -102,10 +102,11 @@ jobs:
             --set datasources."datasources\.yaml".datasources[0].url=http://mimir-distributor.observability:8080 \
             --set datasources."datasources\.yaml".datasources[1].name=Tempo \
             --set datasources."datasources\.yaml".datasources[1].type=tempo \
-            --set datasources."datasources\.yaml".datasources[1].url=http://tempo-query.observability:16686 \
+            --set datasources."datasources\.yaml".datasources[1].url=http://tempo-query-frontend.observability:3200 \
             --set datasources."datasources\.yaml".datasources[2].name=Loki \
             --set datasources."datasources\.yaml".datasources[2].type=loki \
-            --set datasources."datasources\.yaml".datasources[2].url=http://loki-gateway.observability:3100
+            --set datasources."datasources\.yaml".datasources[2].url=http://loki-loki-distributed-gateway.observability:3100
+
 
       #- name: Deploy OpenTelemetry Collector   # UNCOMMENT THIS IF WE WANT TO DEPLOY OTEL COLLECTOR USING HELM
         #run: |
