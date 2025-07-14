@@ -22,7 +22,7 @@ app = Flask(__name__)
 
 # === OpenTelemetry Setup ===
 
-OTLP_ENDPOINT = os.getenv("OTEL_EXPORTER_OTLP_ENDPOINT", "http://otel-collector.observability:4317")
+OTLP_ENDPOINT = os.getenv("OTEL_EXPORTER_OTLP_ENDPOINT", "http://otel-collector.otel-demo:4317")
 resource = Resource.create({SERVICE_NAME: "my-llm-app"})
 
 trace_provider = TracerProvider(resource=resource)
