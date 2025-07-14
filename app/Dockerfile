@@ -1,7 +1,7 @@
 FROM vinaygolkonda99/llm:otel_deps as base_deps
 
 # Final Stage:
-FROM python:3.10.11-slim-buster as final
+FROM FROM python:3.10-slim-bookworm as final
 
 WORKDIR /app
 
