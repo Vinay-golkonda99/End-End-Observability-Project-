@@ -77,7 +77,7 @@ jobs:
             --set mimir.compactor.enabled=true \
             --set mimir.minio.enabled=true \
             --set mimir.store_gateway.enabled=true
-            --timeout 10m0s
+    
 
       # Deploy Tempo (Traces)
       - name: Deploy Tempo (Traces)
