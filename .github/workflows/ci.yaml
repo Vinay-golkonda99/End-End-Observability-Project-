@@ -68,15 +68,15 @@ jobs:
           helm repo update
 
       # Deploy Mimir (Metrics)
-      - name: Deploy Mimir (Metrics)
-        run: |
-          helm upgrade --install mimir grafana/mimir-distributed \
-            --namespace observability \
-            --create-namespace \
-            --set mimir.alertmanager.enabled=false \
-            --set mimir.compactor.enabled=true \
-            --set mimir.minio.enabled=true \
-            --set mimir.store_gateway.enabled=true
+      #- name: Deploy Mimir (Metrics)
+        #run: |
+          #helm upgrade --install mimir grafana/mimir-distributed \
+            #--namespace observability \
+            #--create-namespace \
+            #--set mimir.alertmanager.enabled=false \
+            #--set mimir.compactor.enabled=true \
+            #--set mimir.minio.enabled=true \
+            #--set mimir.store_gateway.enabled=true
     
 
       # Deploy Tempo (Traces)
