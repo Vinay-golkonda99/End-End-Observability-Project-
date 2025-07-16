@@ -1,0 +1,6 @@
+prometheus:
+  prometheusSpec:
+    scrapeConfigs:
+      - job_name: 'llm-app'
+        static_configs:
+          - targets: ['llm-app.monitoring.svc.cluster.local:1999']
