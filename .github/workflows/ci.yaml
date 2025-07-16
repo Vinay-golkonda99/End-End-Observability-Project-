@@ -35,7 +35,7 @@ jobs:
           docker push ${{ secrets.DOCKER_USERNAME }}/llm_otel:app
 
   deploy:
-    name: 🚀 Deploy to GKE
+    name: 🚀 Deploy to GKE & Install Observability
     runs-on: ubuntu-latest
     needs: build-and-push
 
@@ -61,80 +61,44 @@ jobs:
       - name: 📦 Install Helm
         uses: azure/setup-helm@v3
 
-      - name: Add Helm Repos
+      - name: ➕ Add Helm Repos
         run: |
           helm repo add grafana https://grafana.github.io/helm-charts
           helm repo add open-telemetry https://open-telemetry.github.io/opentelemetry-helm-charts
+          helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
           helm repo update
 
-      # Deploy Mimir (Metrics)
-      #- name: Deploy Mimir (Metrics)
-        #run: |
-          #helm upgrade --install mimir grafana/mimir-distributed \
-            #--namespace observability \
-            #--create-namespace \
-            #--set mimir.alertmanager.enabled=false \
-            #--set mimir.compactor.enabled=true \
-            #--set mimir.minio.enabled=true \
-            #--set mimir.store_gateway.enabled=true
-    
+      - name: 🚀 Deploy Mimir (Metrics backend)
+        run: |
+          helm upgrade --install mimir grafana/mimir-distributed \
+            --namespace observability \
+            --create-namespace \
+            -f lgtm-helm/mimir/values.yaml
 
-      # Deploy Tempo (Traces)
-      - name: Deploy Tempo (Traces)
+      - name: 🚀 Deploy Tempo (Traces backend)
         run: |
           helm upgrade --install tempo grafana/tempo-distributed \
             --namespace observability \
-            --set tempo.metricsGenerator.enabled=true
-            
+            -f lgtm-helm/tempo/values.yaml
 
-      # Deploy Loki (Logs)
-      - name: Deploy Loki (Logs)
+      - name: 🚀 Deploy Loki (Logs backend)
         run: |
           helm upgrade --install loki grafana/loki-distributed \
             --namespace observability \
-            --set loki.gateway.enabled=true
+            -f lgtm-helm/loki/values.yaml
 
-      # Deploy Grafana UI
-      - name: Deploy Grafana UI
+      - name: 🚀 Deploy Prometheus (Scraper)
+        run: |
+          helm upgrade --install prometheus prometheus-community/prometheus \
+            --namespace observability \
+            -f lgtm-helm/mimir/prometheus.yaml
+
+      - name: 📊 Deploy Grafana
         run: |
           helm upgrade --install grafana grafana/grafana \
             --namespace observability \
-            --set service.type=LoadBalancer \
-            --set adminUser=admin \
-            --set adminPassword=admin \
-            --set datasources."datasources\.yaml".apiVersion=1 \
-            --set datasources."datasources\.yaml".datasources[0].name=Prometheus \
-            --set datasources."datasources\.yaml".datasources[0].type=prometheus \
-            --set datasources."datasources\.yaml".datasources[0].url=http://mimir-query-frontend.observability.svc.cluster.local:8080 \
-            --set datasources."datasources\.yaml".datasources[1].name=Tempo \
-            --set datasources."datasources\.yaml".datasources[1].type=tempo \
-            --set datasources."datasources\.yaml".datasources[1].url=http://tempo-query-frontend.observability:3200 \
-            --set datasources."datasources\.yaml".datasources[2].name=Loki \
-            --set datasources."datasources\.yaml".datasources[2].type=loki \
-            --set datasources."datasources\.yaml".datasources[2].url=http://loki-loki-distributed-query-frontend.observability:3100
+            -f lgtm-helm/grafana/values.yaml
 
-      # Deploy OpenTelemetry Collector (uncomment if needed)
-      # - name: Deploy OpenTelemetry Collector
-      #   run: |
-      #     helm upgrade --install otel-collector open-telemetry/opentelemetry-collector \
-      #       --namespace observability \
-      #       --create-namespace \
-      #       -f lgtm-helm/otel-values.yaml
-
-      # Apply K8s manifests from /k8s
-      - name: 📦 Apply K8s manifests from /k8s
+      - name: 📄 Deploy K8s manifests for ML App
         run: |
           kubectl apply -R -f k8s/
-
-      # Deploy OpenTelemetry Demo App  #UNCOMMENT IF WE WANT TO USE OTEL-DEMO OFFICIAL APP TO TEST!
-      #- name: Deploy OpenTelemetry Demo App
-        #run: |
-          #helm install otel-demo open-telemetry/opentelemetry-demo \
-            #--namespace demo \
-            #--create-namespace \
-            #--set opentelemetry-collector.enabled=false \
-            #--set global.telemetry.enabled=true \
-            #--set global.telemetry.metrics.exporter.otlp.endpoint=http://otel-collector.observability:4317 \
-            #--set global.telemetry.traces.exporter.otlp.endpoint=http://otel-collector.observability:4317 \
-            #--set global.telemetry.logs.enabled=true \
-            #--set global.telemetry.logs.exporter.otlp.endpoint=http://otel-collector.observability:4317
