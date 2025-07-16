@@ -1,3 +1,10 @@
+adminUser: admin
+adminPassword: admin123
+
+service:
+  type: LoadBalancer
+  port: 80
+
 datasources:
   datasources.yaml:
     apiVersion: 1
@@ -7,7 +14,56 @@ datasources:
         url: http://mimir-nginx.monitoring.svc.cluster.local/api/v1/prom
         access: proxy
         isDefault: true
+
+      - name: Loki
+        type: loki
+        url: http://loki.monitoring.svc.cluster.local:3100
+        access: proxy
+
       - name: Tempo
         type: tempo
         url: http://tempo.monitoring.svc.cluster.local:3100
         access: proxy
+
+grafana.ini:
+  server:
+    root_url: http://localhost
+  security:
+    allow_embedding: true
+    cookie_samesite: lax
+  auth:
+    disable_login_form: false
+  cors:
+    enabled: true
+    allow_origin: '*'
+    allow_credentials: true
+    allow_headers: Accept, Content-Type, X-XSRF-TOKEN, Authorization
+
+dashboardProviders:
+  dashboardproviders.yaml:
+    apiVersion: 1
+    providers:
+      - name: 'default'
+        orgId: 1
+        folder: ''
+        type: file
+        disableDeletion: false
+        editable: true
+        options:
+          path: /var/lib/grafana/dashboards/default
+
+dashboards:
+  default:
+    k8s-overview:
+      gnetId: 15757
+      revision: 34
+      datasource: Mimir
+
+    flask-app-metrics:
+      gnetId: 14891
+      revision: 1
+      datasource: Mimir
+
+persistence:
+  enabled: true
+  size: 5Gi
