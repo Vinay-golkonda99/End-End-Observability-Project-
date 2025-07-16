@@ -1,43 +1,64 @@
 loki:
-  resources:
-    requests:
-      cpu: 50m
-      memory: 128Mi
-    limits:
-      cpu: 100m
-      memory: 256Mi
+  auth_enabled: false
 
-  persistence:
-    enabled: false
+  commonConfig:
+    replication_factor: 1
 
-grafana:
-  enabled: false
+  storage:
+    type: filesystem
+    filesystem:
+      directory: /var/loki
 
+  schemaConfig:
+    configs:
+      - from: 2023-01-01
+        store: boltdb-shipper
+        object_store: filesystem
+        schema: v11
+        index:
+          prefix: index_
+          period: 24h
+
+  ingester:
+    wal:
+      enabled: true
+
+gateway:
+  enabled: true
+
+read:
+  replicas: 1
+write:
+  replicas: 1
+backend:
+  replicas: 1
+
+service:
+  type: ClusterIP
+  port: 3100
+
+# Enable Promtail for Kubernetes log collection
 promtail:
   enabled: true
-  resources:
-    requests:
-      cpu: 50m
-      memory: 64Mi
-    limits:
-      cpu: 100m
-      memory: 128Mi
+  service:
+    enabled: true
   config:
     clients:
-      - url: http://loki:3100/loki/api/v1/push
-
+      - url: http://loki-loki-distributed-gateway.observability.svc.cluster.local/loki/api/v1/push
     positions:
       filename: /tmp/positions.yaml
-
-    server:
-      http_listen_port: 3101
-      grpc_listen_port: 0
-
     scrape_configs:
-      - job_name: system
-        static_configs:
-          - targets:
-              - localhost
-            labels:
-              job: varlogs
-              __path__: /var/log/*.log
+      - job_name: kubernetes-pods
+        kubernetes_sd_configs:
+          - role: pod
+        relabel_configs:
+          - source_labels: [__meta_kubernetes_pod_label_app]
+            target_label: app
+          - action: labelmap
+            regex: __meta_kubernetes_pod_label_(.+)
+          - source_labels: [__meta_kubernetes_namespace]
+            target_label: namespace
+          - source_labels: [__meta_kubernetes_pod_name]
+            target_label: pod
+          - source_labels: [__meta_kubernetes_pod_container_name]
+            target_label: container
