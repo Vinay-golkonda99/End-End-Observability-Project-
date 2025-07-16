@@ -68,12 +68,12 @@ jobs:
           helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
           helm repo update
 
-      - name: 🚀 Deploy Mimir (Metrics backend)
-        run: |
-          helm upgrade --install mimir grafana/mimir-distributed \
-            --namespace observability \
-            --create-namespace \
-            -f lgtm-helm/mimir/values.yaml
+      #- name: 🚀 Deploy Mimir (Metrics backend)
+        #run: |
+          #helm upgrade --install mimir grafana/mimir-distributed \
+            #--namespace observability \
+            #--create-namespace \
+            #-f lgtm-helm/mimir/values.yaml
 
       - name: 🚀 Deploy Tempo (Traces backend)
         run: |
