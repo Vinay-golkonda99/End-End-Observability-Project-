@@ -1,16 +1,13 @@
-resources:
-  requests:
-    cpu: 50m
-    memory: 128Mi
-  limits:
-    cpu: 100m
-    memory: 256Mi
-
-adminUser: admin
-adminPassword: admin
-
-persistence:
-  enabled: false
-
-service:
-  type: ClusterIP
+datasources:
+  datasources.yaml:
+    apiVersion: 1
+    datasources:
+      - name: Mimir
+        type: prometheus
+        url: http://mimir-nginx.monitoring.svc.cluster.local/api/v1/prom
+        access: proxy
+        isDefault: true
+      - name: Tempo
+        type: tempo
+        url: http://tempo.monitoring.svc.cluster.local:3100
+        access: proxy
