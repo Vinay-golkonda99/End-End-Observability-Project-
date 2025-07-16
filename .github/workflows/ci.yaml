@@ -97,7 +97,24 @@ jobs:
         run: |
           helm upgrade --install grafana grafana/grafana \
             --namespace observability \
-            -f lgtm-helm/grafana/values.yaml
+            --create-namespace \
+            --set service.type=LoadBalancer \
+            --set adminUser=admin \
+            --set adminPassword=admin \
+            --set datasources."datasources\.yaml".apiVersion=1 \
+            --set datasources."datasources\.yaml".datasources[0].name=Prometheus \
+            --set datasources."datasources\.yaml".datasources[0].type=prometheus \
+            --set datasources."datasources\.yaml".datasources[0].url=http://mimir-nginx.observability.svc.cluster.local/api/v1/prom \
+            --set datasources."datasources\.yaml".datasources[0].access=proxy \
+            --set datasources."datasources\.yaml".datasources[1].name=Tempo \
+            --set datasources."datasources\.yaml".datasources[1].type=tempo \
+            --set datasources."datasources\.yaml".datasources[1].url=http://tempo-query-frontend.observability.svc.cluster.local:3200 \
+            --set datasources."datasources\.yaml".datasources[1].access=proxy \
+            --set datasources."datasources\.yaml".datasources[2].name=Loki \
+            --set datasources."datasources\.yaml".datasources[2].type=loki \
+            --set datasources."datasources\.yaml".datasources[2].url=http://loki-loki-distributed-gateway.observability.svc.cluster.local:3100 \
+            --set datasources."datasources\.yaml".datasources[2].access=proxy
+
 
       - name: 📄 Deploy K8s manifests for ML App
         run: |
