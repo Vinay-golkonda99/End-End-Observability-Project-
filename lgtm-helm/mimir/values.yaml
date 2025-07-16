@@ -1,67 +1,48 @@
-global:
-  replicas: 1
-
-ingester:
-  replicas: 1
-  resources:
-    requests:
-      cpu: 50m
-      memory: 128Mi
+mimir:
+  structuredConfig:
     limits:
-      cpu: 100m
-      memory: 256Mi
+      max_series_per_user: 500000
+    blocks_storage:
+      backend: filesystem
+      filesystem:
+        dir: /data
 
-distributor:
-  replicas: 1
-  resources:
-    requests:
-      cpu: 50m
-      memory: 128Mi
-    limits:
-      cpu: 100m
-      memory: 256Mi
+  ingester:
+    replicas: 2
 
-querier:
-  replicas: 1
-  resources:
-    requests:
-      cpu: 50m
-      memory: 128Mi
-    limits:
-      cpu: 100m
-      memory: 256Mi
+  distributor:
+    replicas: 2
 
-queryFrontend:
-  replicas: 1
-  resources:
-    requests:
-      cpu: 50m
-      memory: 128Mi
-    limits:
-      cpu: 100m
-      memory: 256Mi
+  querier:
+    replicas: 2
 
-storeGateway:
-  replicas: 1
-  resources:
-    requests:
-      cpu: 50m
-      memory: 128Mi
-    limits:
-      cpu: 100m
-      memory: 256Mi
+  query_frontend:
+    replicas: 2
 
-ruler:
-  replicas: 1
-  resources:
-    requests:
-      cpu: 50m
-      memory: 128Mi
-    limits:
-      cpu: 100m
-      memory: 256Mi
+  store_gateway:
+    replicas: 2
 
-minio:
-  enabled: true
-  persistence:
-    enabled: false
+  ruler:
+    enabled: true
+
+  compactor:
+    enabled: true
+
+  alertmanager:
+    enabled: true
+
+  admin_api:
+    enabled: true
+
+  gateway:
+    enabled: true
+
+  serviceMonitor:
+    enabled: true
+
+  # Enables ingress or LoadBalancer if needed
+  nginx:
+    enabled: true
+    service:
+      type: ClusterIP  # Use LoadBalancer if you want external access
+      port: 80
