@@ -112,7 +112,7 @@ jobs:
             --set datasources."datasources\.yaml".datasources[1].access=proxy \
             --set datasources."datasources\.yaml".datasources[2].name=Loki \
             --set datasources."datasources\.yaml".datasources[2].type=loki \
-            --set datasources."datasources\.yaml".datasources[2].url=http://loki-loki-distributed-gateway.observability.svc.cluster.local:3100 \
+            --set datasources."datasources\.yaml".datasources[2].url=http://loki-loki-distributed-gateway.observability.svc.cluster.local \
             --set datasources."datasources\.yaml".datasources[2].access=proxy
 
 
